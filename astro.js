@@ -212,7 +212,7 @@
    * Skyggeretning = (azimuth + 180°) % 360°
    */
   function calculateShadow(altitudeDeg, azimuthDeg, objectHeightMeters) {
-    var height = (typeof objectHeightMeters === 'number' && objectHeightMeters > 0) ? objectHeightMeters : 1.80;
+    var height = (typeof objectHeightMeters === 'number' && objectHeightMeters > 0) ? objectHeightMeters : 1.75;
     var shadowAzimuth = (azimuthDeg + 180) % 360;
     var compassDir = getCompassDirection(shadowAzimuth);
 

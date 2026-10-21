@@ -27,8 +27,8 @@
 
     var ctx = canvas.getContext('2d');
     var currentMode = options.mode || '3d'; // '3d', 'compass'
-    var subjectType = options.subjectType || 'photographer'; // 'photographer', 'person', 'tree', 'building', 'custom'
-    var subjectHeight = options.subjectHeight || 1.80; // i meter
+    var subjectType = options.subjectType || 'person'; // 'person', 'tree', 'building', 'custom'
+    var subjectHeight = options.subjectHeight || 1.75; // i meter
 
     // Kamera/visningsvinkler for 3D-visning
     var camera = {
@@ -524,50 +524,7 @@
 
       ctx.save();
 
-      if (subjectType === 'photographer') {
-        // Fotograf med kamera & stativ
-        var legSpread = 0.5;
-        var leg1 = project(-legSpread * 0.8, -legSpread * 0.5, 0);
-        var leg2 = project(legSpread * 0.8, -legSpread * 0.5, 0);
-        var leg3 = project(0, legSpread * 0.7, 0);
-        var tripApex = project(0, 0, h * 0.75);
-
-        // Stativben
-        ctx.strokeStyle = '#cbd5e1';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(tripApex.x, tripApex.y); ctx.lineTo(leg1.x, leg1.y);
-        ctx.moveTo(tripApex.x, tripApex.y); ctx.lineTo(leg2.x, leg2.y);
-        ctx.moveTo(tripApex.x, tripApex.y); ctx.lineTo(leg3.x, leg3.y);
-        ctx.stroke();
-
-        // Kamera på toppen
-        ctx.fillStyle = '#f59e0b';
-        var camW = 14, camH = 9;
-        ctx.fillRect(tripApex.x - camW * 0.5, tripApex.y - camH, camW, camH);
-        ctx.fillStyle = '#f8fafc';
-        ctx.fillRect(tripApex.x + camW * 0.25, tripApex.y - camH * 0.8, 6, 6);
-
-        // Fotograf silhuet
-        var pHead = project(0, -0.45, h * 0.95);
-        var pBody = project(0, -0.45, h * 0.4);
-        var pFoot1 = project(-0.2, -0.6, 0);
-        var pFoot2 = project(0.2, -0.6, 0);
-
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(pBody.x, pBody.y); ctx.lineTo(pFoot1.x, pFoot1.y);
-        ctx.moveTo(pBody.x, pBody.y); ctx.lineTo(pFoot2.x, pFoot2.y);
-        ctx.moveTo(pBody.x, pBody.y); ctx.lineTo(pHead.x, pHead.y);
-        ctx.stroke();
-
-        ctx.fillStyle = '#f8fafc';
-        ctx.beginPath();
-        ctx.arc(pHead.x, pHead.y - 6, 6, 0, PI * 2);
-        ctx.fill();
-
-      } else if (subjectType === 'tree') {
+      if (subjectType === 'tree') {
         // Enkeltstående træ
         ctx.strokeStyle = '#92400e';
         ctx.lineWidth = Math.max(4, scale * 0.25);
@@ -618,7 +575,7 @@
         ctx.closePath(); ctx.fill(); ctx.stroke();
 
       } else {
-        // Person
+        // Person (1.75m eller brugerdefineret)
         var headY = pTop.y;
         var footY = pBase.y;
         var personH = footY - headY;
@@ -626,17 +583,20 @@
         ctx.strokeStyle = '#f8fafc';
         ctx.lineWidth = 3;
 
+        // Hoved
         ctx.beginPath();
         ctx.arc(pBase.x, headY + 5, 5.5, 0, PI * 2);
         ctx.fillStyle = '#f8fafc';
         ctx.fill();
 
+        // Krop og ben
         ctx.beginPath();
         ctx.moveTo(pBase.x, headY + 11);
         ctx.lineTo(pBase.x, footY - personH * 0.4);
         ctx.lineTo(pBase.x - 6, footY);
         ctx.moveTo(pBase.x, footY - personH * 0.4);
         ctx.lineTo(pBase.x + 6, footY);
+        // Arme
         ctx.moveTo(pBase.x - 8, headY + 18);
         ctx.lineTo(pBase.x + 8, headY + 18);
         ctx.stroke();

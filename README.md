@@ -13,33 +13,32 @@ Bygget i den velkendte **Kamera-EVF (Elektronisk Søger) æstetik** med Fotograf
    - **Tydelig, kontrastrig skygge**: Markant og solid skyggeprojektion på en oplyst terrænflade med afstandsmarkeringer og telemetri-badge ved skyggespidsen.
    - **2D Kompas & Solur (Radar)**: Top-down visning af solens bane hen over kompasset, solvektor og skyggekegle modsat solen.
 
-2. **🗺️ Interaktivt Fotokort (Leaflet Satellit & Gadekort)**:
+2. **🗺️ Interaktivt Fotokort (Minimalistisk Gadekort & Satellit)**:
    - Skift til **KORT**-fanen for at se solens vinkel og skyggens faktiske fald over det virkelige terræn!
-   - Inkluderer fotografernes foretrukne satellitkort (luftfoto) samt mørkt EVF-kort.
+   - Inkluderer et **minimalistisk gadekort som standard** for lynhurtigt overblik, med mulighed for at skifte til **satellitkort (luftfoto)**.
    - Træk eller klik på kortet for at flytte kameraet og planlægge billeder ved kirker, klipper, bygninger eller kyster.
    - Dynamisk solvektor (gylden stråle), skyggekegle (i meter) og solopgangs-/solnedgangslinjer direkte på kortet.
 
-2. **⏱️ Døgn-tidsrejse & Afspilning ("Kør tiden frem")**:
+3. **⏱️ Døgn-tidsrejse & Afspilning ("Kør tiden frem")**:
    - **Tidslinje-scrubber**: 24-timers slider med farvekodet forløb gennem nattens mørke, den blå time, solopgang, den gyldne time og middagssolen.
    - **Afspilningsanimation (Play/Pause)**: Tryk på ▶️ for at køre tiden jævnt frem (1×, 5×, 10×, 30×, 60× hastighed) og se skyggen rotere og vokse/krympe som et levende solur.
    - **🔴 LIVE NU**: Synkroniserer øjeblikkeligt med det aktuelle minut på uret.
    - **Hurtighop-knapper**: Ét klik for at springe direkte til solopgang, morgenens gyldne time, solmiddag (korteste skygge), aftenens gyldne time, solnedgang eller den blå time.
 
-3. **📍 GPS & Avanceret Stedsøgning**:
+4. **📍 GPS & Avanceret Stedsøgning**:
    - EVF-topbar med ét-tryks GPS-opdatering i felten.
    - Fritekstsøgning via Open-Meteo Geocoding.
    - Indbygget katalog over populære danske fotospots (f.eks. *Møns Klint*, *Rubjerg Knude*, *Grenen*, *Silkeborg Søerne*, *Dyrehaven*, *Bornholm*, m.fl.).
 
-4. **🚶 Motiv- & Højdevalg**:
+5. **🚶 Motiv- & Højdevalg**:
    - Skift motivtype og højde med det samme:
-     - 📷 **Fotograf med kamerastativ** (1.80 m)
-     - 🚶 **Voksen person** (1.75 m)
+     - 🚶 **Voksen person** (1.75 m som standard)
      - 🌳 **Solitært træ** (5.0 m)
      - 🏢 **Bygning / Mur** (10.0 m)
      - ⚙️ **Fri højde-slider** (fra 0.5 m til 25 m)
    - Real-time telemetri: Skyggelængde i meter, skyggefaktor ($\times H$) og kompasretning.
 
-5. **🌤️ Skydække & Skyggekvalitet**:
+6. **🌤️ Skydække & Skyggekvalitet**:
    - Forbindes med Open-Meteo for at vurdere skyggens hårdhed baseret på reelt lokalt skydække:
      - **Knivskarp**: 0–20% skyer (hårde, kontrastrige skygger).
      - **Moderat**: 21–65% skyer (filtreret sollys med bløde overgange).

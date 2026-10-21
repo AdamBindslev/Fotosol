@@ -65,8 +65,8 @@
     // Zoom kontrol i nederste højre hjørne
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Kortlag
-    var darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Kortlag: Minimalistisk gadekort (default) og Satellit hvis man vælger det
+    var streetLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap &copy; CARTO'
     });
@@ -76,18 +76,12 @@
       attribution: '&copy; Esri World Imagery'
     });
 
-    var osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap'
-    });
-
-    // Satellit som standard for fotografer (så man ser reelle bygninger og træer)
-    satLayer.addTo(map);
+    // Minimalistisk gadekort er standard
+    streetLayer.addTo(map);
 
     var baseMaps = {
-      "🛰️ Satellit": satLayer,
-      "🌑 Mørkt EVF-kort": darkLayer,
-      "🗺️ Gadekort": osmLayer
+      "🗺️ Gadekort": streetLayer,
+      "🛰️ Satellit": satLayer
     };
     L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
