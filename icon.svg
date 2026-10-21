@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#07090e"/>
+      <stop offset="50%" stop-color="#0f1422"/>
+      <stop offset="100%" stop-color="#181f2f"/>
+    </linearGradient>
+
+    <!-- Sun / Golden Hour Gradient -->
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#d97706" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="sunDisk" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+
+    <!-- Shadow Gradient -->
+    <linearGradient id="shadowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#070c17" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#101827" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Lens Ring Gradient -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base background square with rounded corners -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- EVF Compass / Aperture Outer Ring -->
+  <circle cx="256" cy="256" r="215" fill="none" stroke="url(#ringGrad)" stroke-width="4" opacity="0.65"/>
+  <circle cx="256" cy="256" r="195" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="6,8" opacity="0.25"/>
+
+  <!-- Compass Cardinal Ticks -->
+  <line x1="256" y1="28" x2="256" y2="44" stroke="#f43f5e" stroke-width="4" stroke-linecap="round"/>
+  <line x1="256" y1="468" x2="256" y2="484" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+  <line x1="28" y1="256" x2="44" y2="256" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+  <line x1="468" y1="256" x2="484" y2="256" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Ground Plane Grid Line -->
+  <ellipse cx="256" cy="355" rx="175" ry="55" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+  <ellipse cx="256" cy="355" rx="115" ry="36" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+  <!-- Long Projected Cast Shadow on Ground -->
+  <polygon points="256,355 125,410 85,385 256,355" fill="url(#shadowGrad)"/>
+
+  <!-- Sun Rays & Angle Beam -->
+  <line x1="365" y1="165" x2="256" y2="245" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4,4" opacity="0.5"/>
+  <line x1="365" y1="165" x2="105,398" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,5" opacity="0.25"/>
+
+  <!-- Sun Atmospheric Glow -->
+  <circle cx="365" cy="165" r="115" fill="url(#sunGlow)"/>
+
+  <!-- Rising/Golden Sun Disk -->
+  <circle cx="365" cy="165" r="46" fill="url(#sunDisk)"/>
+
+  <!-- Center Subject (Photographer & Tripod Silhouette) -->
+  <!-- Legs -->
+  <line x1="256" y1="260" x2="240" y2="355" stroke="#f8fafc" stroke-width="4" stroke-linecap="round"/>
+  <line x1="256" y1="260" x2="272" y2="355" stroke="#f8fafc" stroke-width="4" stroke-linecap="round"/>
+  <line x1="256" y1="260" x2="256" y2="355" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+  <!-- Camera Body & Lens -->
+  <rect x="246" y="246" width="22" height="15" rx="2" fill="#38bdf8"/>
+  <rect x="238" y="249" width="8" height="9" rx="1" fill="#f8fafc"/>
+  <!-- Photographer Silhouette -->
+  <circle cx="282" cy="270" r="10" fill="#f8fafc"/>
+  <path d="M 282 282 L 282 320 L 290 355" fill="none" stroke="#f8fafc" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Angle Protractor Indicator Arc (θ) -->
+  <path d="M 295 355 A 40 40 0 0 0 285 330" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <text x="305" y="342" fill="#fbbf24" font-family="ui-monospace, monospace" font-size="16" font-weight="bold">θ</text>
+
+  <!-- Reticle Corner Brackets [ ] -->
+  <path d="M 70 95 L 70 70 L 95 70" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+  <path d="M 442 95 L 442 70 L 417 70" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+  <path d="M 70 417 L 70 442 L 95 442" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+  <path d="M 442 417 L 442 442 L 417 442" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+</svg>

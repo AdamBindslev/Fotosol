@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#07080a">
+  <meta name="description" content="FotoSol – af Fotografiske Signaler: Solens placering, højde og dynamisk grafisk skyggesimulering for fotografer.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FotoSol">
+
+  <title>FotoSol – af Fotografiske Signaler</title>
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Beregner sol- og skyggepositioner...</div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- KOMPAKT EVF KAMERA-HEADER -->
+    <header class="app-header">
+      <div class="evf-topbar">
+        <!-- Række 1: Brand & Kamera-knapper -->
+        <div class="evf-topbar-primary">
+          <div class="evf-brand">
+            <img src="logo-fs.jpg" alt="Fotografiske Signaler" class="evf-logo" width="30" height="30">
+            <div class="evf-brand-text">
+              <span class="evf-title">FOTOSOL</span>
+              <span class="evf-sub">af Fotografiske Signaler</span>
+            </div>
+          </div>
+
+          <div class="evf-controls">
+            <button id="btnGps" class="evf-btn" title="Opdater GPS-position i felten" aria-label="Opdater GPS">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 2v3m0 14v3M2 12h3m14 0h3"></path>
+              </svg>
+            </button>
+            <button id="btnSearchOpen" class="evf-btn" title="Søg by eller fotospot" aria-label="Søg spot">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+            <button id="btnRefresh" class="evf-btn" title="Genindlæs beregninger" aria-label="Opdater">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+            </button>
+            <button id="btnNightMode" class="evf-btn evf-night-btn" title="Rød Astro Nattilstand (bevarer nattesyn)" aria-label="Astro Nattilstand">
+              <span class="night-mode-dot"></span>
+              <span class="night-mode-label">ASTRO</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Række 2: Lokationsstatus og Søger-felt -->
+        <div class="evf-location-bar" id="locationCurrentWrap" title="Klik for at søge anden by eller fotospot">
+          <span class="evf-reticle" id="locationPinIcon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="8"></circle>
+              <line x1="12" y1="2" x2="12" y2="6"></line>
+              <line x1="12" y1="18" x2="12" y2="22"></line>
+              <line x1="2" y1="12" x2="6" y2="12"></line>
+              <line x1="18" y1="12" x2="22" y2="12"></line>
+            </svg>
+          </span>
+          <span class="evf-loc-name" id="locName">Søger GPS...</span>
+          <span class="evf-loc-sub" id="locCoords">Finder position...</span>
+          <span class="evf-search-hint">Søg spot 🔍</span>
+        </div>
+      </div>
+
+      <!-- Søgeboks Modal Dropdown -->
+      <div class="search-dropdown" id="searchDropdown">
+        <div class="search-input-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Søg by, kystlinje eller fotospot..." autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults">
+          <!-- Dynamiske søgeresultater eller fotospots -->
+        </div>
+      </div>
+    </header>
+
+    <!-- STATUS / OFFLINE BANNER -->
+    <div id="statusBanner" class="status-pill-banner">
+      <span id="statusBannerText">Offline tilstand – solberegninger kører lokalt</span>
+      <span id="statusBannerTime"></span>
+    </div>
+
+    <!-- 7-DAGES HORISONTAL DATOVÆLGER -->
+    <section class="days-bar-container">
+      <div class="days-scroll" id="daysScroll">
+        <!-- Dynamiske dag-chips genereres i app.js -->
+      </div>
+    </section>
+
+    <!-- HOVEDSEKTION: GRAFISK SKYGGESIMULERING -->
+    <main class="sim-card">
+      <!-- Sim Toolbar: Visningstabs og Kameravinkler -->
+      <div class="sim-header">
+        <div class="sim-tabs" role="tablist">
+          <button class="sim-tab-btn active" id="tab3d" data-mode="3d">3D SØGER</button>
+          <button class="sim-tab-btn" id="tabCompass" data-mode="compass">KOMPAS</button>
+          <button class="sim-tab-btn" id="tabProfile" data-mode="profile">PROFIL</button>
+        </div>
+
+        <div class="sim-actions">
+          <button class="sim-btn-icon" id="btnCamReset" title="Nulstil kameravinkel">↺ 3D</button>
+          <button class="sim-btn-icon" id="btnCamRim" title="Modlysvinkel (se direkte mod solen)">☀️ Modlys</button>
+          <button class="sim-btn-icon" id="btnCamShadow" title="Medlysvinkel (se i skyggens retning)">👤 Medlys</button>
+        </div>
+      </div>
+
+      <!-- Canvas Område -->
+      <div class="canvas-wrap">
+        <canvas id="simCanvas"></canvas>
+      </div>
+
+      <!-- Telemetristribe under canvas -->
+      <div class="telemetry-strip">
+        <div class="telemetry-box">
+          <span class="telemetry-label">Solhøjde (θ)</span>
+          <span class="telemetry-val highlight" id="telemetryElevation">+0.0°</span>
+        </div>
+        <div class="telemetry-box">
+          <span class="telemetry-label">Sol-azimut</span>
+          <span class="telemetry-val" id="telemetrySunAz">0° N</span>
+        </div>
+        <div class="telemetry-box">
+          <span class="telemetry-label">Skyggelængde</span>
+          <span class="telemetry-val shadow-val" id="telemetryShadowLen">0.0 m</span>
+        </div>
+        <div class="telemetry-box">
+          <span class="telemetry-label">Skyggeretning</span>
+          <span class="telemetry-val" id="telemetryShadowAz">0° S</span>
+        </div>
+      </div>
+
+      <!-- Motivvalg og Højdekontrol -->
+      <div class="subject-bar">
+        <div class="subject-chips">
+          <button class="subject-chip active" data-type="photographer" data-h="1.8">📷 Fotograf (1.8m)</button>
+          <button class="subject-chip" data-type="person" data-h="1.75">🚶 Person (1.75m)</button>
+          <button class="subject-chip" data-type="tree" data-h="5.0">🌳 Træ (5.0m)</button>
+          <button class="subject-chip" data-type="building" data-h="10.0">🏢 Bygning (10m)</button>
+          <button class="subject-chip" data-type="custom" data-h="2.0">⚙️ Fri højde</button>
+        </div>
+
+        <div class="subject-slider-wrap" id="customHeightWrap">
+          <span class="subject-slider-label">Motivhøjde:</span>
+          <input type="range" id="subjectHeightSlider" min="0.5" max="25" step="0.1" value="1.8">
+          <span class="subject-slider-val" id="subjectHeightVal">1.8 m</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- TIDSKONTROL: SCRUBBER, PLAY/PAUSE & HURTIGHOP -->
+    <section class="time-control-card">
+      <div class="time-header-row">
+        <div class="time-clock-wrap">
+          <span class="time-clock-display" id="timeDisplay">12:00</span>
+          <span class="time-phase-badge" id="phaseBadge">GYLDEN TIME</span>
+        </div>
+
+        <div class="time-playback-actions">
+          <button id="btnLive" class="btn-live active" title="Synkroniser til aktuelt minut">
+            <span class="live-pulse"></span>LIVE
+          </button>
+          <button id="btnSpeed" class="speed-btn" title="Skift afspilningshastighed">10×</button>
+          <button id="btnPlay" class="play-btn" title="Kør tiden frem i simulationen">
+            <svg id="playIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span id="playLabel">Spil</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 24-timers slider -->
+      <div class="timeline-slider-container">
+        <div class="timeline-bar-gradient"></div>
+        <input type="range" id="timeSlider" class="timeline-slider" min="0" max="1439" step="1" value="720">
+        <div class="timeline-ticks">
+          <span>00:00</span>
+          <span>06:00</span>
+          <span>12:00</span>
+          <span>18:00</span>
+          <span>24:00</span>
+        </div>
+      </div>
+
+      <!-- Hurtighop-knapper -->
+      <div class="quick-jumps">
+        <button class="jump-chip" id="jumpNow">● Nu</button>
+        <button class="jump-chip blue" id="jumpDawn">🌆 Blå time morgen</button>
+        <button class="jump-chip golden" id="jumpSunrise">🌅 Solopgang</button>
+        <button class="jump-chip golden" id="jumpGoldenMorning">✨ Gylden time morgen</button>
+        <button class="jump-chip" id="jumpNoon">☀️ Solmiddag</button>
+        <button class="jump-chip golden" id="jumpGoldenEvening">✨ Gylden time aften</button>
+        <button class="jump-chip golden" id="jumpSunset">🌇 Solnedgang</button>
+        <button class="jump-chip blue" id="jumpDusk">🌆 Blå time aften</button>
+      </div>
+    </section>
+
+    <!-- FOTODATA & TELEMETRI GRID -->
+    <section class="data-cards-grid">
+      <!-- Solens Bane & Position -->
+      <div class="info-card">
+        <div class="info-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          Solposition & Bane
+        </div>
+        <div class="info-card-body">
+          <div class="data-row">
+            <span class="data-label">Solhøjde (Elevation)</span>
+            <span class="data-value" id="cardSunAlt">+0.0°</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Kompasretning (Azimut)</span>
+            <span class="data-value" id="cardSunAz">0° Nord</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Solmiddag (Kulmination)</span>
+            <span class="data-value" id="cardSolarNoon">--:-- (+0.0°)</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Farvetemperatur (Kelvin)</span>
+            <span class="data-value" id="cardKelvin">5500 K</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skyggeanalyse -->
+      <div class="info-card">
+        <div class="info-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          Skyggeanalyse
+        </div>
+        <div class="info-card-body">
+          <div class="data-row">
+            <span class="data-label">Skyggelængde</span>
+            <span class="data-value" id="cardShadowLen">0.00 m</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Skyggefaktor (× motivhøjde)</span>
+            <span class="data-value" id="cardShadowRatio">0.0×</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Skyggens kompasretning</span>
+            <span class="data-value" id="cardShadowAz">0° Syd</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Skyggekvalitet (Skydække)</span>
+            <span class="data-value" id="cardShadowDiffusion">Knivskarp</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOTOGRAFISKE RÅD & EVF SØGER-TIPS -->
+    <section class="advice-card">
+      <div class="advice-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        Fotografisk Vurdering & Komposition
+      </div>
+      <p class="advice-desc" id="adviceDesc">
+        Solens højde og vinkel analyseres for det valgte tidspunkt.
+      </p>
+      <div class="advice-tip" id="adviceTip">
+        Tip: Udnyt de lange skygger som ledende linjer mod dit hovedmotiv.
+      </div>
+    </section>
+
+    <!-- DAGENS SOLTIDER (EPHEMERIS OVERSIGT) -->
+    <section class="info-card">
+      <div class="info-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        Dagens Sol- & Fotofaser
+      </div>
+      <div class="info-card-body">
+        <div class="data-row">
+          <span class="data-label">Morgen: Blå Time</span>
+          <span class="data-value" id="timeRowDawn">--:-- – --:--</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Solopgang</span>
+          <span class="data-value" id="timeRowSunrise">--:--</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Morgen: Gylden Time</span>
+          <span class="data-value" id="timeRowGoldenMorn">--:-- – --:--</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Aften: Gylden Time</span>
+          <span class="data-value" id="timeRowGoldenEve">--:-- – --:--</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Solnedgang</span>
+          <span class="data-value" id="timeRowSunset">--:--</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Aften: Blå Time</span>
+          <span class="data-value" id="timeRowDusk">--:-- – --:--</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER MED FOTOGRAFISKE SIGNALER BRANDING -->
+    <footer class="app-footer">
+      <img src="fotografiske-signaler-wordmark.png" alt="Fotografiske Signaler" class="footer-logo" width="190">
+      <div class="footer-credits">
+        Skabt til fotografer af <a href="https://adambindslev.dk" target="_blank" rel="noopener">Adam Bindslev</a> – <a href="https://adambindslev.dk" target="_blank" rel="noopener">Fotografiske Signaler</a><br>
+        100% offline beregninger af solens azimut, elevation og skyggelængde.
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="astro.js"></script>
+  <script src="weather.js"></script>
+  <script src="shadow-sim.js"></script>
+  <script src="app.js"></script>
+
+  <!-- PWA Service Worker Registrering -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('FotoSol SW registreret:', reg.scope))
+          .catch(err => console.warn('FotoSol SW fejl:', err));
+      });
+    }
+  </script>
+</body>
+</html>
