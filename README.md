@@ -10,9 +10,14 @@ Bygget i den velkendte **Kamera-EVF (Elektronisk Søger) æstetik** med Fotograf
 
 1. **📐 Dynamisk Grafisk Skyggesimulering**:
    - **3D EVF-Søger**: Interaktiv 3D-scene hvor du kan rotere kameravinklen for at se scenen i perspektiv, direkte mod solen (modlysvinkel) eller i skyggens retning (medlys).
-   - **Realistisk skyggeprojektion**: Simulerer både kerneskygge (umbra) og blød penumbra-diffusion i spidsen.
+   - **Tydelig, kontrastrig skygge**: Markant og solid skyggeprojektion på en oplyst terrænflade med afstandsmarkeringer og telemetri-badge ved skyggespidsen.
    - **2D Kompas & Solur (Radar)**: Top-down visning af solens bane hen over kompasset, solvektor og skyggekegle modsat solen.
-   - **Elevationsprofil & Geometri**: Tværsnit med vinkelmåler ($\theta$), objekt-højde ($H$) og beregnet skyggelængde ($L = H / \tan(\theta)$).
+
+2. **🗺️ Interaktivt Fotokort (Leaflet Satellit & Gadekort)**:
+   - Skift til **KORT**-fanen for at se solens vinkel og skyggens faktiske fald over det virkelige terræn!
+   - Inkluderer fotografernes foretrukne satellitkort (luftfoto) samt mørkt EVF-kort.
+   - Træk eller klik på kortet for at flytte kameraet og planlægge billeder ved kirker, klipper, bygninger eller kyster.
+   - Dynamisk solvektor (gylden stråle), skyggekegle (i meter) og solopgangs-/solnedgangslinjer direkte på kortet.
 
 2. **⏱️ Døgn-tidsrejse & Afspilning ("Kør tiden frem")**:
    - **Tidslinje-scrubber**: 24-timers slider med farvekodet forløb gennem nattens mørke, den blå time, solopgang, den gyldne time og middagssolen.
@@ -41,8 +46,8 @@ Bygget i den velkendte **Kamera-EVF (Elektronisk Søger) æstetik** med Fotograf
      - **Diffus**: 66–85% skyer (svage konturer).
      - **Overskyet**: > 85% skyer (spredt himmellys uden direkte skygge).
 
-6. **🔴 ASTRO Rød Nattilstand (Red Night Mode)**:
-   - Skifter øjeblikkeligt hele appen (inklusive 3D-søger og vektorgrafik) til en dybrød monokrom farvepalet for at bevare nattesyn i mørket.
+6. **☀️ 100% Fokus på Solen & Dagslyset**:
+   - Fokuseret udelukkende på solens bane, gyldne/blå timer, solmiddag og skyggelængder.
 
 7. **📱 Fuld PWA & 100% Offline Support**:
    - Installeres direkte på mobilen som en native app.

@@ -3,11 +3,14 @@
  * Giver fuld offline-adgang i felten for solberegninger, skyggesimulering og seneste vejrdata.
  */
 
-const CACHE_NAME = 'fotosol-fs-v1';
+const CACHE_NAME = 'fotosol-fs-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './styles.css',
+  './leaflet.css',
+  './leaflet.js',
+  './map-view.js',
   './astro.js',
   './weather.js',
   './shadow-sim.js',

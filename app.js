@@ -24,7 +24,6 @@
     subjectType: 'photographer',
     subjectHeight: 1.80,
     simMode: '3d',
-    isNightRed: false,
     forecastData: null,
     sunTimes: null,
     searchDebounceTimer: null
@@ -34,7 +33,6 @@
   const el = {
     loadingOverlay: document.getElementById('loadingOverlay'),
     loadingText: document.getElementById('loadingText'),
-    btnNightMode: document.getElementById('btnNightMode'),
     btnRefresh: document.getElementById('btnRefresh'),
     btnGps: document.getElementById('btnGps'),
     btnSearchOpen: document.getElementById('btnSearchOpen'),
@@ -50,11 +48,14 @@
     statusBannerTime: document.getElementById('statusBannerTime'),
     daysScroll: document.getElementById('daysScroll'),
 
-    // Canvas & Sim
+    // Canvas, Kort & Sim
+    canvasWrap: document.getElementById('canvasWrap'),
+    mapWrap: document.getElementById('mapWrap'),
     simCanvas: document.getElementById('simCanvas'),
     tab3d: document.getElementById('tab3d'),
     tabCompass: document.getElementById('tabCompass'),
-    tabProfile: document.getElementById('tabProfile'),
+    tabMap: document.getElementById('tabMap'),
+    simActions3d: document.getElementById('simActions3d'),
     btnCamReset: document.getElementById('btnCamReset'),
     btnCamRim: document.getElementById('btnCamRim'),
     btnCamShadow: document.getElementById('btnCamShadow'),
@@ -120,6 +121,7 @@
   async function init() {
     loadPreferences();
     setupCanvas();
+    setupMap();
     setupEvents();
     renderDaysBar();
 
@@ -137,13 +139,6 @@
    * Indlæs gemte brugerindstillinger
    */
   function loadPreferences() {
-    const savedNight = localStorage.getItem('fotosol_night_red') === 'true';
-    if (savedNight) {
-      state.isNightRed = true;
-      document.body.classList.add('theme-night-red');
-      el.btnNightMode.classList.add('active-red');
-    }
-
     try {
       const savedLoc = localStorage.getItem('fotosol_last_loc');
       if (savedLoc) {
@@ -165,6 +160,40 @@
     window.addEventListener('resize', () => {
       if (simulator) simulator.render();
     });
+  }
+
+  /**
+   * Initialiser interaktivt fotokort
+   */
+  function setupMap() {
+    if (window.PhotoMap) {
+      PhotoMap.initMap('mapContainer', {
+        lat: state.currentLoc.lat,
+        lng: state.currentLoc.lng,
+        onLocationChange: async (lat, lng) => {
+          state.currentLoc.lat = lat;
+          state.currentLoc.lng = lng;
+          state.currentLoc.isGps = false;
+
+          try {
+            const geo = await WeatherEngine.reverseGeocode(lat, lng);
+            state.currentLoc.name = geo.name || 'Valgt fotospot';
+            state.currentLoc.sub = geo.sub || '';
+          } catch (e) {
+            state.currentLoc.name = 'Valgt fotospot';
+            state.currentLoc.sub = lat.toFixed(3) + '°N, ' + lng.toFixed(3) + '°Ø';
+          }
+
+          try {
+            localStorage.setItem('fotosol_last_loc', JSON.stringify(state.currentLoc));
+          } catch (e) {}
+
+          updateLocationDisplay();
+          recalculateSunAndShadow();
+          await updateWeatherAndForecast(false);
+        }
+      });
+    }
   }
 
   /**
@@ -192,6 +221,9 @@
    */
   async function loadInitialLocation() {
     updateLocationDisplay();
+    if (window.PhotoMap) {
+      PhotoMap.setLocation(state.currentLoc.lat, state.currentLoc.lng, false);
+    }
     recalculateSunAndShadow();
     await updateWeatherAndForecast();
   }
@@ -236,6 +268,9 @@
         } catch (e) {}
 
         updateLocationDisplay();
+        if (window.PhotoMap) {
+          PhotoMap.setLocation(lat, lng, true);
+        }
         recalculateSunAndShadow();
         await updateWeatherAndForecast(true);
         showLoading(false);
@@ -340,13 +375,17 @@
     if (simulator) {
       simulator.update(altitude, azimuth, state.subjectHeight, {
         subjectType: state.subjectType,
-        isNightRed: state.isNightRed,
         diffusionFactor: weatherEval.diffusionFactor,
         sunTimes: state.sunTimes
       });
     }
 
-    // 6. Opdater UI displays
+    // 6. Opdater interaktivt fotokort
+    if (window.PhotoMap) {
+      PhotoMap.updateSunAndShadow(altitude, azimuth, shadow.shadowLength, state.sunTimes);
+    }
+
+    // 7. Opdater UI displays
     updateUIElements(targetDate, altitude, azimuth, shadow, weatherEval);
   }
 
@@ -544,17 +583,6 @@
    * Opsæt alle event listeners
    */
   function setupEvents() {
-    // ASTRO Rød nattilstand toggle
-    el.btnNightMode.addEventListener('click', () => {
-      state.isNightRed = !state.isNightRed;
-      document.body.classList.toggle('theme-night-red', state.isNightRed);
-      el.btnNightMode.classList.toggle('active-red', state.isNightRed);
-      localStorage.setItem('fotosol_night_red', state.isNightRed);
-      if (simulator) {
-        simulator.update(null, null, null, { isNightRed: state.isNightRed });
-      }
-    });
-
     // GPS & Refresh
     el.btnGps.addEventListener('click', () => acquireGpsLocation());
     el.btnRefresh.addEventListener('click', async () => {
@@ -589,14 +617,32 @@
       }
     });
 
-    // Visnings-tabs for simulation (3D / Kompas / Profil)
-    const tabs = [el.tab3d, el.tabCompass, el.tabProfile];
+    // Visnings-tabs for simulation (3D / Kompas / Kort)
+    const tabs = [el.tab3d, el.tabCompass, el.tabMap];
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         state.simMode = tab.dataset.mode;
-        if (simulator) simulator.setMode(state.simMode);
+
+        if (state.simMode === 'map') {
+          el.canvasWrap.style.display = 'none';
+          el.mapWrap.style.display = 'block';
+          if (el.simActions3d) el.simActions3d.style.display = 'none';
+          if (window.PhotoMap) {
+            PhotoMap.resize();
+            PhotoMap.setLocation(state.currentLoc.lat, state.currentLoc.lng, true);
+            recalculateSunAndShadow();
+          }
+        } else {
+          el.canvasWrap.style.display = 'block';
+          el.mapWrap.style.display = 'none';
+          if (el.simActions3d) el.simActions3d.style.display = state.simMode === '3d' ? 'flex' : 'none';
+          if (simulator) {
+            simulator.setMode(state.simMode);
+            simulator.render();
+          }
+        }
       });
     });
 
@@ -753,6 +799,9 @@
         } catch (e) {}
 
         updateLocationDisplay();
+        if (window.PhotoMap) {
+          PhotoMap.setLocation(item.lat, item.lng, true);
+        }
         recalculateSunAndShadow();
         showLoading(true, 'Henter vejr og solforhold for ' + item.name + '...');
         await updateWeatherAndForecast(true);

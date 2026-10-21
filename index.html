@@ -14,7 +14,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="leaflet.css">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -56,10 +57,6 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
               </svg>
-            </button>
-            <button id="btnNightMode" class="evf-btn evf-night-btn" title="Rød Astro Nattilstand (bevarer nattesyn)" aria-label="Astro Nattilstand">
-              <span class="night-mode-dot"></span>
-              <span class="night-mode-label">ASTRO</span>
             </button>
           </div>
         </div>
@@ -116,10 +113,10 @@
         <div class="sim-tabs" role="tablist">
           <button class="sim-tab-btn active" id="tab3d" data-mode="3d">3D SØGER</button>
           <button class="sim-tab-btn" id="tabCompass" data-mode="compass">KOMPAS</button>
-          <button class="sim-tab-btn" id="tabProfile" data-mode="profile">PROFIL</button>
+          <button class="sim-tab-btn" id="tabMap" data-mode="map">🗺️ KORT</button>
         </div>
 
-        <div class="sim-actions">
+        <div class="sim-actions" id="simActions3d">
           <button class="sim-btn-icon" id="btnCamReset" title="Nulstil kameravinkel">↺ 3D</button>
           <button class="sim-btn-icon" id="btnCamRim" title="Modlysvinkel (se direkte mod solen)">☀️ Modlys</button>
           <button class="sim-btn-icon" id="btnCamShadow" title="Medlysvinkel (se i skyggens retning)">👤 Medlys</button>
@@ -127,8 +124,13 @@
       </div>
 
       <!-- Canvas Område -->
-      <div class="canvas-wrap">
+      <div class="canvas-wrap" id="canvasWrap">
         <canvas id="simCanvas"></canvas>
+      </div>
+
+      <!-- Interaktivt Fotokort Område -->
+      <div class="map-wrap" id="mapWrap" style="display: none;">
+        <div id="mapContainer"></div>
       </div>
 
       <!-- Telemetristribe under canvas -->
@@ -353,6 +355,8 @@
   </div>
 
   <!-- Scripts -->
+  <script src="leaflet.js"></script>
+  <script src="map-view.js"></script>
   <script src="astro.js"></script>
   <script src="weather.js"></script>
   <script src="shadow-sim.js"></script>

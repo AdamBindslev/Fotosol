@@ -47,39 +47,6 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* ASTRO RØD NATTILSTAND (Bevarer fotografens nattesyn i mørket) */
-body.theme-night-red {
-  --bg-primary: #080000;
-  --bg-surface: #140202;
-  --bg-surface-elevated: #240505;
-  --bg-card: rgba(30, 4, 4, 0.92);
-  --border-subtle: rgba(255, 50, 50, 0.2);
-  --border-highlight: rgba(255, 50, 50, 0.45);
-
-  --text-main: #ff4d4d;
-  --text-muted: #c93434;
-  --text-dim: #8b1e1e;
-
-  --golden-primary: #ff4444;
-  --golden-glow: rgba(255, 68, 68, 0.25);
-  --golden-gradient: linear-gradient(135deg, #ff4444 0%, #990000 100%);
-
-  --blue-primary: #ff3333;
-  --blue-glow: rgba(255, 51, 51, 0.2);
-  --blue-gradient: linear-gradient(135deg, #ff3333 0%, #880000 100%);
-
-  --shadow-primary: #ff5555;
-  --shadow-glow: rgba(255, 85, 85, 0.25);
-
-  --accent-success: #ff6666;
-  --accent-warning: #ff4444;
-  --accent-danger: #ff1111;
-}
-
-body.theme-night-red img {
-  filter: sepia(100%) hue-rotate(310deg) saturate(300%);
-}
-
 /* Nulstilling & basis */
 * {
   box-sizing: border-box;
@@ -228,25 +195,10 @@ body {
   border-color: var(--border-highlight);
   background: rgba(255, 255, 255, 0.08);
 }
-.evf-btn.active, .evf-btn.active-red {
+.evf-btn.active {
   border-color: #ef4444;
   color: #ff4d4d;
   background: rgba(239, 68, 68, 0.15);
-}
-.evf-night-btn {
-  padding: 5px 8px;
-}
-.night-mode-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #ef4444;
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
-}
-.night-mode-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
 }
 
 /* Lokationsbjælke */
@@ -491,6 +443,60 @@ body {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* Interaktivt Fotokort Container */
+.map-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  min-height: 290px;
+  background: #070a12;
+  border-bottom: 1px solid var(--border-subtle);
+}
+#mapContainer {
+  width: 100%;
+  height: 100%;
+  min-height: 290px;
+  z-index: 1;
+}
+
+/* Leaflet tilpasning til EVF tema */
+.leaflet-container {
+  background: #070a12 !important;
+  font-family: var(--font-sans) !important;
+}
+.leaflet-bar {
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+}
+.leaflet-bar a {
+  background-color: var(--bg-surface-elevated) !important;
+  color: var(--text-main) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+.leaflet-bar a:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.leaflet-control-layers {
+  background: var(--bg-surface-elevated) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-highlight) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6) !important;
+  font-size: 11px !important;
+  font-family: var(--font-mono) !important;
+  padding: 6px 10px !important;
+}
+.leaflet-control-attribution {
+  background: rgba(7, 10, 18, 0.8) !important;
+  color: var(--text-dim) !important;
+  font-size: 9px !important;
+}
+.leaflet-control-attribution a {
+  color: var(--text-muted) !important;
 }
 
 /* Telemetribjælke lige over/under canvas */
