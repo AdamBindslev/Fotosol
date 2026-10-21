@@ -3,7 +3,7 @@
  * Giver fuld offline-adgang i felten for solberegninger, skyggesimulering og seneste vejrdata.
  */
 
-const CACHE_NAME = 'fotosol-fs-v2';
+const CACHE_NAME = 'fotosol-fs-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -51,8 +51,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // For eksterne API-kald til Open-Meteo: Network-first med fallback til cache
-  if (url.hostname.includes('open-meteo.com') || url.hostname.includes('openstreetmap.org')) {
+  // For eksterne API-kald og kort-fliser: Network-first med fallback til cache
+  if (url.hostname.includes('open-meteo.com') || url.hostname.includes('openstreetmap.org') || url.hostname.includes('arcgisonline.com')) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {

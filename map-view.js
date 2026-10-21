@@ -65,10 +65,10 @@
     // Zoom kontrol i nederste højre hjørne
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Kortlag: Minimalistisk gadekort (default) og Satellit hvis man vælger det
-    var streetLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    // Kortlag: Åbent OpenStreetMap gadekort (uden API-nøgle eller vandmærker) og Satellit
+    var streetLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap &copy; CARTO'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
     });
 
     var satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -76,7 +76,7 @@
       attribution: '&copy; Esri World Imagery'
     });
 
-    // Minimalistisk gadekort er standard
+    // Gadekort er standard
     streetLayer.addTo(map);
 
     var baseMaps = {
